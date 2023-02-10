@@ -1,7 +1,12 @@
 {
-	"name": "@hackclub/parchment",
+	"name": "@hackclub/transcript",
 	"description": "Hackily manage your project strings",
-	"packageManager": "yarn@3.4.1",
+	"version": "0.0.0",
+	"author": "Max Wofford <max@maxwofford.com>",
+	"maintainers": [
+		"Charalampos Fanoulis <charalampos.fanoulis@gmail.com>",
+		"Max Wofford <max@maxwofford.com>"
+	],
 	"devDependencies": {
 		"@sapphire/prettier-config": "^1.4.5",
 		"@types/jest": "^29.4.0",
@@ -20,5 +25,9 @@
 		"dist/index.js",
 		"dist/index.js.map",
 		"dist/index.d.ts"
-	]
+	],
+	"packageManager": "yarn@3.4.1",
+	"publishConfig": {
+		"access": "public"
+	}
 }
