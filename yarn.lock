@@ -416,9 +416,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hackclub/parchment@workspace:.":
+"@hackclub/transcript@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@hackclub/parchment@workspace:."
+  resolution: "@hackclub/transcript@workspace:."
   dependencies:
     "@sapphire/prettier-config": ^1.4.5
     "@types/jest": ^29.4.0
