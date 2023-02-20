@@ -1,0 +1,10 @@
+greeting: Hello, world!
+errors:
+  notFound: the dog sniffs around, but doesn't look like it found what it's looking for
+  missingPermission: what typa kibble ya try'n ta feed me? you can't do that!
+  general: something went wrong!
+type-of-pie:
+  - cinnamon
+  - butterscotch
+  - cinnamon and butterscotch
+  - snail # apparently a favorite of Toriel in Undertale
