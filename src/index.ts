@@ -1,51 +1,75 @@
-import fs from 'fs';
-import yaml from 'js-yaml';
-import path from 'path';
+import { readFileSync } from 'fs';
+import { load } from 'js-yaml';
+import { join } from 'path';
 
 type TranscriptObj = Record<string, unknown>;
 type VarObj = Record<string, string | number | boolean>;
 
 const sample = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)];
 
-// ex. t('greeting', { userID: 'UX12U391' })
-export const t = (search: string, vars: VarObj = {}) => {
-	if (vars) {
-		console.log(`I'm searching for words in my yaml file under "${search}". These variables are set: ${JSON.stringify(vars)}`);
-	} else {
-		console.log(`I'm searching for words in my yaml file under "${search}"`);
+/**
+ * The library's core... thing, y'know. It reads your transcript and recites what you've told it with perfect* accuracy
+ * *accuracy may depend on your transcript choices..
+ */
+export class TranscriptProvider {
+	/**
+	 * to be used in the far future...
+	 */
+	protected cache: Map<string, string> | undefined;
+
+	/**
+	 * stores the transcript file... for now...
+	 */
+	protected transcript: TranscriptObj | undefined;
+	constructor(src: string) {
+		this.transcript = load(readFileSync(join(process.cwd(), src), 'utf-8')) as TranscriptObj; // this needs to be cached
 	}
-	const searchArr = search.split('.');
-	const transcriptObj = yaml.load(fs.readFileSync(path.join(process.cwd(), 'src/lib/transcript.yml'), 'utf-8')) as TranscriptObj; // this needs to be cached
 
-	return evalTranscript(recurseTranscript(searchArr, transcriptObj), vars);
-};
+	/**
+	 * Grab a string from your transcript.yml
+	 * @param key they key to search for
+	 * @param vars any variables you want to pass to `eval`
+	 * @returns the string you asked for, OR the key you used if it cannot be located
+	 */
 
-const recurseTranscript = (searchArr: string[], transcriptObj: TranscriptObj, topRequest?: string): string => {
-	topRequest = topRequest || searchArr.join('.');
-	const searchCursor = searchArr.shift();
-	if (!searchCursor) throw `Couldn't parse cursor`;
+	public recite(key: string, vars?: VarObj) {
+		const searchArr = key.split('.');
+		return this.evalWithContext(this.recurseKeys(searchArr, this.transcript ?? {}), vars ?? {}); //TODO: WE SHOULD **NOT** EVAL IF THE STRING IS NOT FOUND -cf
+	}
 
-	const targetObj = transcriptObj[searchCursor] as string | string[] | TranscriptObj | undefined;
+	protected recurseKeys(searchArr: string[], transcriptObj: TranscriptObj, topRequest?: string): string {
+		topRequest = topRequest || searchArr.join('.');
+		const searchCursor = searchArr.shift();
+		if (!searchCursor) throw `Couldn't parse cursor`;
 
-	if (!targetObj) return topRequest as string; //if not found, return the key
+		const targetObj = transcriptObj[searchCursor] as string | string[] | TranscriptObj | undefined;
 
-	if (searchArr.length > 0) {
-		return recurseTranscript(searchArr, targetObj as TranscriptObj, topRequest);
-	} else {
-		if (Array.isArray(targetObj)) {
-			return sample(targetObj);
+		if (!targetObj) return topRequest as string; //if not found, return the key
+
+		if (searchArr.length > 0) {
+			return this.recurseKeys(searchArr, targetObj as TranscriptObj, topRequest);
 		} else {
-			return targetObj as string;
+			if (Array.isArray(targetObj)) {
+				return sample(targetObj);
+			} else {
+				return targetObj as string;
+			}
 		}
 	}
-};
 
-const evalTranscript = (target: string, vars: VarObj = {}) => {
-	const context = {
-		...vars,
-		t
-	};
-	return function () {
-		return eval('`' + target + '`');
-	}.call(context);
-};
+	/**
+	 * spicy eval, pls don't use me
+	 * @param target string to eval
+	 * @param vars stuff to be placed in `this`
+	 * @returns stuff. idk. cosmic horrors beyond my comprehension
+	 */
+	private evalWithContext(target: string, vars: VarObj = {}): string {
+		const context = {
+			...vars,
+			t: this.recite.bind(this)
+		};
+		return function () {
+			return eval('`' + target + '`');
+		}.call(context);
+	}
+}
