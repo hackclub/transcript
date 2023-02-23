@@ -1,4 +1,6 @@
 greeting: Hello, world!
+welcome: oh hello! i have tea and a fresh ${this.t('type-of-pie2')} pie cooling off... please come over and have some!
+name: nice to meet you, ${this.name}!
 errors:
   notFound: the dog sniffs around, but doesn't look like it found what it's looking for
   missingPermission: what typa kibble ya try'n ta feed me? you can't do that!
@@ -8,3 +10,4 @@ type-of-pie:
   - butterscotch
   - cinnamon and butterscotch
   - snail # apparently a favorite of Toriel in Undertale
+type-of-pie2: cherry
