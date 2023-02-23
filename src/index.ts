@@ -35,7 +35,7 @@ export class TranscriptProvider {
 	public recite(key: string, vars?: VarObj) {
 		const searchArr = key.split('.');
 		const line = this.recurseKeys(searchArr, this.transcript ?? {});
-		return line === null ? line : this.evalWithContext(line, vars ?? {}); //TODO: WE SHOULD **NOT** EVAL IF THE STRING IS NOT FOUND -cf
+		return line === null ? key : this.evalWithContext(line, vars ?? {}); //TODO: WE SHOULD **NOT** EVAL IF THE STRING IS NOT FOUND -cf
 	}
 
 	protected recurseKeys(searchArr: string[], transcriptObj: TranscriptObj, topRequest?: string): string | null {
