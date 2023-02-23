@@ -34,17 +34,18 @@ export class TranscriptProvider {
 
 	public recite(key: string, vars?: VarObj) {
 		const searchArr = key.split('.');
-		return this.evalWithContext(this.recurseKeys(searchArr, this.transcript ?? {}), vars ?? {}); //TODO: WE SHOULD **NOT** EVAL IF THE STRING IS NOT FOUND -cf
+		const line = this.recurseKeys(searchArr, this.transcript ?? {});
+		return line === null ? line : this.evalWithContext(line, vars ?? {}); //TODO: WE SHOULD **NOT** EVAL IF THE STRING IS NOT FOUND -cf
 	}
 
-	protected recurseKeys(searchArr: string[], transcriptObj: TranscriptObj, topRequest?: string): string {
+	protected recurseKeys(searchArr: string[], transcriptObj: TranscriptObj, topRequest?: string): string | null {
 		topRequest = topRequest || searchArr.join('.');
 		const searchCursor = searchArr.shift();
 		if (!searchCursor) throw `Couldn't parse cursor`;
 
 		const targetObj = transcriptObj[searchCursor] as string | string[] | TranscriptObj | undefined;
 
-		if (!targetObj) return topRequest as string; //if not found, return the key
+		if (!targetObj) return null; //if not found, return the key
 
 		if (searchArr.length > 0) {
 			return this.recurseKeys(searchArr, targetObj as TranscriptObj, topRequest);
