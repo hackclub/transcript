@@ -1,7 +1,12 @@
 {
 	"name": "@hackclub/transcript",
 	"description": "Hackily manage your project strings",
-	"version": "0.0.0",
+	"version": "0.1.0",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/hackclub/transcript"
+	},
 	"author": "Max Wofford <max@maxwofford.com>",
 	"maintainers": [
 		"Charalampos Fanoulis <charalampos.fanoulis@gmail.com>",
@@ -26,6 +31,7 @@
 		"dist/index.js.map",
 		"dist/index.d.ts"
 	],
+	"main": "dist/index.js",
 	"packageManager": "yarn@3.4.1",
 	"publishConfig": {
 		"access": "public"
